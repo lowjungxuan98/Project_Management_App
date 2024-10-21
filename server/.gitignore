@@ -1,3 +1,19 @@
 node_modules
 # Keep environment variables out of version control
 .env
+/dist/prisma/seed.js
+/dist/src/controllers/projectController.js
+/dist/src/controllers/searchController.js
+/dist/src/controllers/taskController.js
+/dist/src/controllers/teamController.js
+/dist/src/controllers/userController.js
+/dist/src/routes/projectRoutes.js
+/dist/src/routes/searchRoutes.js
+/dist/src/routes/taskRoutes.js
+/dist/src/routes/teamRoutes.js
+/dist/src/routes/userRoutes.js
+/dist/src/index.js
+/dist/src/swagger.js
+/dist/src/swagger_output.json
+/src/swagger_output.json
+/package-lock.json
