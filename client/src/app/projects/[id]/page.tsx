@@ -1,14 +1,12 @@
 "use client";
-import { useState } from "react";
+import { use, useState } from "react";
 import ProjectHeader from "@/app/projects/ProjectHeader";
+import Board from "@/app/projects/BoardView";
 
-type Props = {
-  params: {
-    id: string,
-  };
-};
-const Page = ({ params }: Props) => {
-  const { id } = params;
+type Params = Promise<{ id: string }>;
+
+function Project({ params }: { params: Params; }) {
+  const { id } = use(params);
   const [activeTab, setActiveTab] = useState("Board");
   const [isModalNewTaskOpen, setIsModalNewTaskOpen] = useState(false);
 
@@ -19,10 +17,10 @@ const Page = ({ params }: Props) => {
       {/*  onClose={() => setIsModalNewTaskOpen(false)}*/}
       {/*  id={id}*/}
       {/*/>*/}
-      {/*<ProjectHeader activeTab={activeTab} setActiveTab={setActiveTab} />*/}
-      {/*{activeTab === "Board" && (*/}
-      {/*  <Board id={id} setIsModalNewTaskOpen={setIsModalNewTaskOpen} />*/}
-      {/*)}*/}
+      <ProjectHeader activeTab={activeTab} setActiveTab={setActiveTab} />
+      {activeTab === "Board" && (
+        <Board id={id} setIsModalNewTaskOpen={setIsModalNewTaskOpen} />
+      )}
       {/*{activeTab === "List" && (*/}
       {/*  <List id={id} setIsModalNewTaskOpen={setIsModalNewTaskOpen} />*/}
       {/*)}*/}
@@ -34,5 +32,6 @@ const Page = ({ params }: Props) => {
       {/*)}*/}
     </div>
   );
-};
-export default Page;
+}
+
+export default Project;
