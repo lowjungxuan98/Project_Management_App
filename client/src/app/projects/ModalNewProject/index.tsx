@@ -46,7 +46,7 @@ const ModalNewProject = ({ isOpen, onClose }: Props) => {
         className="mt-4 space-y-6"
         onSubmit={(e) => {
           e.preventDefault();
-          handleSubmit();
+          handleSubmit().then(r => onClose);
         }}
       >
         <input
