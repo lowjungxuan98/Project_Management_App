@@ -26,11 +26,11 @@ async function main() {
   const orderedFileNames = [
     "team.json",
     "project.json",
-    "projectTeam.json",
     "user.json",
     "task.json",
     "attachment.json",
     "comment.json",
+    "projectTeam.json",
     "taskAssignment.json",
   ];
 
