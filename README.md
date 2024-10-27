@@ -1,60 +1,59 @@
 # Project Management App Setup Guide
 
-Welcome! This guide will help you set up the database, manage common errors, and configure AWS for your project. Follow each section carefully to get started with your project.
+Welcome to your Project Management App setup guide! This document will help you set up the database, manage common
+errors, and configure AWS. Follow each section carefully for a smooth project setup.
 
 ---
 
 ## Database Management
 
-### 1. Resetting the Database
+### Step 1: Resetting the Database
 
-To reset your database to a fresh state, use the following command:
+To start with a clean database, use the command below:
 
 ```bash
 npx prisma migrate reset
 ```
 
-This command will erase all existing data and reapply migrations, preparing a clean database for you.
+> **Note**: This command erases all data and re-applies migrations, providing a fresh database.
 
-### 2. Inserting Default Data
+### Step 2: Inserting Default Data
 
-After resetting, populate your database with default data by running:
+After resetting, insert essential data with:
 
 ```bash
 ts-node prisma/seed.ts
 ```
 
-This will insert essential starting data for your project.
+This command populates the database with the default starting data for your project.
 
 ---
 
 ## Important Error Notes
 
 1. **Default Values**
-   - Default values for fields are found in `server/prisma/seedData`.
-   - Always update this file if you need consistent default values.
+    - The default values for fields are in `server/prisma/seedData`.
+    - Edit this file if you need to update default values to maintain consistency.
 
 2. **Auto-Increment Fields**
-   - Avoid manually setting values for fields marked as `@id @default(autoincrement())` in `server/prisma/schema.prisma`.
-   - Setting these fields manually may lead to errors.
+    - Avoid manually setting values for fields marked as `@id @default(autoincrement())` in
+      `server/prisma/schema.prisma`.
+    - Manually assigning values to these fields can cause errors.
 
 3. **Error Handling in Project Creation**
-   - An error may occur if an ID is manually assigned to an auto-incremented field.
-   - Example error message:
-
-     ```bash
-     Error creating a project: 
-     Invalid prisma.project.create() invocation
-     Unique constraint failed on the fields: (id)
-     ```
-
-   - **Solution**: Ensure that auto-incremented fields are not assigned values in your code or seed files.
+    - **Example Error**: Setting an ID for an auto-increment field may trigger this error:
+      ```bash
+      Error creating a project: 
+      Invalid prisma.project.create() invocation
+      Unique constraint failed on the fields: (id)
+      ```
+    - **Solution**: Ensure auto-incremented fields are not manually assigned in your code or seed files.
 
 ---
 
 ## Running the Application
 
-Follow these steps to start the client and server:
+Start both the client and server with the following steps:
 
 1. **Start the Client**
 
@@ -74,14 +73,14 @@ Follow these steps to start the client and server:
 
 ## Updating Dependencies
 
-To upgrade all dependencies to their latest versions:
+To update all dependencies to their latest versions, run:
 
 ```bash
 npx npm-check-updates -u
 npm install
 ```
 
-This command updates `package.json` with the latest versions and installs them.
+This updates `package.json` to the latest versions and installs them.
 
 ---
 
@@ -91,78 +90,96 @@ This command updates `package.json` with the latest versions and installs them.
 
 #### Step 1: Create a Virtual Private Cloud (VPC)
 
-1. Go to **VPC** in your AWS Console and select **Create VPC**.
-2. Use the following settings:
+1. In the AWS Console, go to **VPC** and select **Create VPC**.
+2. Configure your VPC as shown in the following diagram:
 
    ![Create VPC](assets/create_vpc.png)
 
 #### Step 2: Create Subnets
 
 1. Go to **VPC > Subnets > Create subnet**.
-2. Choose the VPC you created (e.g., `pm_vpc`).
-3. Create three subnets with the settings below:
+2. Choose your newly created VPC (e.g., `pm_vpc`).
+3. Set up three subnets with the following settings:
 
-   - **Subnet 1**
-      - Name: `pm_public-subnet-1`
-      - IPv4 CIDR block: `10.0.0.0/24`
+    - **Subnet 1**
+        - Name: `pm_public-subnet-1`
+        - IPv4 subnet CIDR block: `10.0.0.0/24`
 
-   - **Subnet 2**
-      - Name: `pm_private-subnet-1`
-      - IPv4 CIDR block: `10.0.1.0/24`
+    - **Subnet 2**
+        - Name: `pm_private-subnet-1`
+        - IPv4 subnet CIDR block: `10.0.1.0/24`
 
-   - **Subnet 3**
-      - Name: `pm_private-subnet-2`
-      - IPv4 CIDR block: `10.0.2.0/24`
+    - **Subnet 3**
+        - Name: `pm_private-subnet-2`
+        - IPv4 subnet CIDR block: `10.0.2.0/24`
 
-4. Ensure the Availability Zone matches your region.
+> **Tip**: Ensure the Availability Zone matches your chosen AWS region.
 
-For more on CIDR blocks, check out this [CIDR video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=27250).
+For more details on CIDR blocks, watch
+this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=27250).
 
 #### Step 3: Create an Internet Gateway
 
 1. Go to **VPC > Internet Gateways** and select **Create Internet Gateway**.
-2. Create and name your internet gateway, then attach it to your VPC (`pm_vpc`).
+2. Name your internet gateway and attach it to your VPC (`pm_vpc`).
 
-   - ![Create Internet Gateway](assets/pm_internet-gateway.png)
-   - ![Attach Gateway to VPC](assets/internet_gateway_attach_vpc.png)
+    - ![Create Internet Gateway](assets/pm_internet-gateway.png)
+    - ![Attach Gateway to VPC](assets/internet_gateway_attach_vpc.png)
 
 #### Step 4: Create Route Tables
 
 1. Go to **VPC > Route tables** and create three route tables:
 
-   - **Public Route Table**
-      - Name: `pm_public-route-table-1`
-      - Subnet Association: `pm_public-subnet-1`
+    - **Public Route Table**
+        - Name: `pm_public-route-table-1`
+        - VPC: `pm_vpc`
+        - Subnet Association: `pm_public-subnet-1`
 
-   - **Private Route Table 1**
-      - Name: `pm_private-route-table-1`
-      - Subnet Association: `pm_private-subnet-1`
+    - **Private Route Table 1**
+        - Name: `pm_private-route-table-1`
+        - VPC: `pm_vpc`
+        - Subnet Association: `pm_private-subnet-1`
 
-   - **Private Route Table 2**
-      - Name: `pm_private-route-table-2`
-      - Subnet Association: `pm_private-subnet-2`
+    - **Private Route Table 2**
+        - Name: `pm_private-route-table-2`
+        - VPC: `pm_vpc`
+        - Subnet Association: `pm_private-subnet-2`
 
-2. Edit the routes in `pm_public-route-table-1` to allow internet access.
+2. In `pm_public-route-table-1`, edit routes to allow internet access.
 
-   - ![Edit Routes](assets/edit_routes.png)
-   - ![Add Route](assets/add_route.png)
+    - ![Edit Routes](assets/edit_routes.png)
+    - ![Add Route](assets/add_route.png)
+
+---
 
 ### Setting Up EC2 Instance
 
-1. **Launch EC2 Instance**
-   - Go to **EC2 > Instances > Launch an instance**.
+1. **Launch an EC2 Instance**
+    - In **EC2 > Instances**, select **Launch an instance**.
 
 2. **Configure Instance Settings**
-   - **Name and Tags**: Set Name to `pm_ec2-backend`.
-   - **Application and OS Images**:
-      - Select **Amazon Linux**.
-      - Choose **Amazon Linux 2023 AMI (Free tier eligible)**.
-   - **Key pair (login)**:
-      - Create a new RSA key pair, name it `standard-key`.
-   - **Network settings**:
-      - Create a new security group and allow:
-         - ✅ **SSH traffic** from anywhere
-         - ✅ **HTTPS traffic** from the internet
-         - ✅ **HTTP traffic** from the internet
+    - **Name and Tags**: Set Name to `pm_ec2-backend`.
+    - **Application and OS Images**:
+        - Select **Amazon Linux**.
+        - Choose **Amazon Linux 2023 AMI (Free tier eligible)**.
+    - **Key Pair (Login)**:
+        - Create a new RSA key pair, name it `standard-key`.
+    - **Network Settings**:
+        - Create a new security group and allow:
+            - ✅ **SSH traffic** from anywhere
+            - ✅ **HTTPS traffic** from the internet
+            - ✅ **HTTP traffic** from the internet
+        - **Additional Configuration**:
+            - VPC: Select `pm_vpc`
+            - Subnet: Choose `pm_public-subnet-1`
+            - Enable Auto-assign public IP
+            - Security Group Name: `pm_ec2-sg`
+            - Description: `pm_ec2-sg created [DATE]`
 
-For more details, refer to this [video tutorial](https://youtu.be/KAV8vo7hGAo?si=adrniPdbONkLQQQ9&t=20604).
+3. **Launch the Instance**
+
+4. **Connect to the Instance**
+    - In **EC2 > Instances**, locate `pm_ec2-backend`, select it, and click **Connect**.
+    - Inside the instance details, click **Connect** again.
+
+> For more details, check out this [video tutorial](https://youtu.be/KAV8vo7hGAo?si=adrniPdbONkLQQQ9&t=20604).
