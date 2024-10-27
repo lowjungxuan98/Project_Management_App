@@ -2,7 +2,7 @@
 
 Welcome to the Project Management App setup guide! This document will guide you through setting up the database,
 handling common errors, configuring AWS, and deploying the app on an EC2 instance. Follow each section carefully for a
-successful project setup.
+smooth project setup.
 
 ---
 
@@ -33,13 +33,13 @@ This command populates the database with the default starting data for your proj
 ## Important Error Notes
 
 1. **Default Values**
-    - Default values for fields are in `server/prisma/seedData`.
+    - Default values for fields are located in `server/prisma/seedData`.
     - Update this file if you need to change default values for consistency.
 
 2. **Auto-Increment Fields**
     - Avoid manually setting values for fields marked as `@id @default(autoincrement())` in
       `server/prisma/schema.prisma`.
-    - Assigning values to these fields manually can lead to errors.
+    - Manually assigning values to these fields can lead to errors.
 
 3. **Error Handling in Project Creation**
     - **Example Error**: Assigning an ID to an auto-increment field may cause this error:
@@ -90,7 +90,8 @@ This updates `package.json` to the latest versions and installs them.
 #### Step 1: Create a Virtual Private Cloud (VPC)
 
 1. In the AWS Console, go to **VPC** and select **Create VPC**.
-2. Configure your VPC settings according to the guide:
+2. Configure your VPC settings as shown:
+
    ![Create VPC](assets/create_vpc.png)
 
 #### Step 2: Create Subnets
@@ -124,7 +125,6 @@ this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=2725
 2. Name and attach your internet gateway to the VPC (`pm_vpc`).
 
    ![Create Internet Gateway](assets/pm_internet-gateway.png)
-
    ![Attach Gateway to VPC](assets/internet_gateway_attach_vpc.png)
 
 #### Step 4: Create Route Tables
@@ -147,6 +147,7 @@ this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=2725
         - Subnet Association: `pm_private-subnet-2`
 
 2. Edit the routes in `pm_public-route-table-1` to allow internet access by attaching the internet gateway:
+
    ![Edit Routes](assets/edit_routes.png)
    ![Add Route](assets/add_route.png)
 
@@ -299,7 +300,10 @@ this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=2725
     - **Public access**: Select **No**
     - **VPC Security Group**: Create new
         - **New VPC Security Group name**: `pm_rd-sg`
-    - **Availability Zone**: `apse1-az1`
+
+    - **
+
+Availability Zone**: `apse1-az1`
 
 7. **Monitoring**
     - Turn off **Performance Insights**
@@ -344,5 +348,49 @@ this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=2725
        ```
 
 ---
+
+### Setting Up Amplify
+
+1. **Choose Source Code Provider**
+    - Select **GitHub** and click **Next**
+
+2. **Add Repository and Branch**
+    - Choose the correct repository
+    - Choose the correct branch
+    - If the project is in a monorepo, check ✅ **My app is a monorepo**
+        - Enter the root project directory
+
+3. **App Settings**
+    - Expand **Advanced settings**
+    - Environment variables:
+        - Add Key: `NEXT_PUBLIC_API_BASE_URL`, Value: `http://18.141.160.220`
+
+---
+
+### Setting Up API Gateway
+
+1. Go to **API Gateway > APIs > Create API > REST API**.
+   > **Note**: Choose REST API, not Private API.
+
+2. Choose **New API**, name it `pm_api-gateway`, and click **Create API**.
+
+3. Go to **API Gateway > APIs > [Resources - pm_api-gateway]** and **Create Resource**:
+    - Resource name: `{proxy+}`
+    - ✅ Enable CORS
+
+4. Under the `{proxy+}` resource, **Create Method**:
+    - **Integration Type**: HTTP
+    - **HTTP method**: ANY
+    - **Endpoint URL**: `http://18.141.160.220/{proxy}`
+
+5. Click **Deploy API**:
+    - **Stage**: New Stage
+    - **Stage name**: `prod`
+
+6. Update `NEXT_PUBLIC_API_BASE_URL` in Amplify Environment Variables:
+    - Go to **Amplify** in the AWS console.
+    - Click **View App** > **Hosting** > **Environment Variables**.
+    - Update `NEXT_PUBLIC_API_BASE_URL` to the API Gateway URL.
+    - Go back to the **Overview** tab, click on the **Branch** name, and then click **Redeploy this version**.
 
 > For more guidance, check out this [video tutorial](https://youtu.be/KAV8vo7hGAo?si=adrniPdbONkLQQQ9&t=20604).
