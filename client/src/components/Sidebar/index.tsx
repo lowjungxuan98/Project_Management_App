@@ -19,7 +19,7 @@ import {
   ShieldAlert,
   User,
   Users,
-  X
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -31,11 +31,21 @@ const Sidebar = () => {
   const [showPriority, setShowPriority] = useState(true);
 
   const { data: projects } = useGetProjectsQuery();
-  console.log('Projects data:', projects);
   const dispatch = useAppDispatch();
   const isSidebarCollapsed = useAppSelector(
-    (state) => state.global.isSidebarCollapsed
+    (state) => state.global.isSidebarCollapsed,
   );
+
+  // const { data: currentUser } = useGetAuthUserQuery({});
+  const handleSignOut = async () => {
+    try {
+      // await signOut();
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
+  };
+  // if (!currentUser) return null;
+  // const currentUserDetails = currentUser?.userDetails;
 
   const sidebarClassNames = `fixed flex flex-col h-[100%] justify-between shadow-xl
     transition-all duration-300 h-full z-40 dark:bg-black overflow-y-auto bg-white
@@ -102,14 +112,15 @@ const Sidebar = () => {
           )}
         </button>
         {/* PROJECTS LIST */}
-        {showProjects && projects?.map((project) => (
-          <SidebarLink
-            key={project.id}
-            icon={Briefcase}
-            label={project.name}
-            href={`/projects/${project.id}`}
-          />
-        ))}
+        {showProjects &&
+          projects?.map((project) => (
+            <SidebarLink
+              key={project.id}
+              icon={Briefcase}
+              label={project.name}
+              href={`/projects/${project.id}`}
+            />
+          ))}
 
         {/* PRIORITIES LINKS */}
         <button
@@ -161,16 +172,15 @@ const Sidebar = () => {
             {/*    className="h-full rounded-full object-cover"*/}
             {/*  />*/}
             {/*) : (*/}
-            {/*  <User className="h-6 w-6 cursor-pointer self-center rounded-full dark:text-white" />*/}
+              <User className="h-6 w-6 cursor-pointer self-center rounded-full dark:text-white" />
             {/*)}*/}
-            <User className="h-6 w-6 cursor-pointer self-center rounded-full dark:text-white" />
           </div>
           <span className="mx-3 text-gray-800 dark:text-white">
             {/*{currentUserDetails?.username}*/}
           </span>
           <button
             className="self-start rounded bg-blue-400 px-4 py-2 text-xs font-bold text-white hover:bg-blue-500 md:block"
-            // onClick={handleSignOut}
+            onClick={handleSignOut}
           >
             Sign out
           </button>

@@ -17,3 +17,4 @@ node_modules
 /dist/src/swagger_output.json
 /src/swagger_output.json
 /package-lock.json
+/dist/
