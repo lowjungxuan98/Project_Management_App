@@ -32,6 +32,10 @@ app.use("/users", userRoutes);
 app.use("/teams", teamRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerOutput));
 
+app.get("/", (req, res) => {
+  res.send("This is home route");
+});
+
 /* SERVER */
 const port = Number(process.env.PORT) || 3000;
 app.listen(port, "0.0.0.0", () => {
