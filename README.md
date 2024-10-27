@@ -392,5 +392,6 @@ Availability Zone**: `apse1-az1`
     - Click **View App** > **Hosting** > **Environment Variables**.
     - Update `NEXT_PUBLIC_API_BASE_URL` to the API Gateway URL.
     - Go back to the **Overview** tab, click on the **Branch** name, and then click **Redeploy this version**.
+      ![img.png](assets/amplify_prod.png)
 
 > For more guidance, check out this [video tutorial](https://youtu.be/KAV8vo7hGAo?si=adrniPdbONkLQQQ9&t=20604).
