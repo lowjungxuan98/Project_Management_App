@@ -1,7 +1,8 @@
 # Project Management App Setup Guide
 
-Welcome to your Project Management App setup guide! This document will help you set up the database, manage common
-errors, and configure AWS. Follow each section carefully for a smooth project setup.
+Welcome to the Project Management App setup guide! This document will guide you through setting up the database,
+managing common errors, configuring AWS, and deploying the app on an EC2 instance. Follow each section carefully for a
+successful project setup.
 
 ---
 
@@ -9,7 +10,7 @@ errors, and configure AWS. Follow each section carefully for a smooth project se
 
 ### Step 1: Resetting the Database
 
-To start with a clean database, use the command below:
+To start with a clean database, run:
 
 ```bash
 npx prisma migrate reset
@@ -25,45 +26,43 @@ After resetting, insert essential data with:
 ts-node prisma/seed.ts
 ```
 
-This command populates the database with the default starting data for your project.
+This command populates the database with default starting data for your project.
 
 ---
 
 ## Important Error Notes
 
 1. **Default Values**
-    - The default values for fields are in `server/prisma/seedData`.
-    - Edit this file if you need to update default values to maintain consistency.
+    - Default values for fields are in `server/prisma/seedData`.
+    - Update this file if you need to change default values for consistency.
 
 2. **Auto-Increment Fields**
     - Avoid manually setting values for fields marked as `@id @default(autoincrement())` in
       `server/prisma/schema.prisma`.
-    - Manually assigning values to these fields can cause errors.
+    - Assigning values to these fields manually can lead to errors.
 
 3. **Error Handling in Project Creation**
-    - **Example Error**: Setting an ID for an auto-increment field may trigger this error:
+    - **Example Error**: Assigning an ID to an auto-increment field may cause the following error:
       ```bash
       Error creating a project: 
       Invalid prisma.project.create() invocation
       Unique constraint failed on the fields: (id)
       ```
-    - **Solution**: Ensure auto-incremented fields are not manually assigned in your code or seed files.
+    - **Solution**: Ensure auto-incremented fields are not assigned manually in your code or seed files.
 
 ---
 
 ## Running the Application
 
-Start both the client and server with the following steps:
+To start both the client and server, follow these steps:
 
 1. **Start the Client**
-
    ```bash
    cd client
    npm run dev
    ```
 
 2. **Start the Server**
-
    ```bash
    cd server
    npm run dev
@@ -91,37 +90,37 @@ This updates `package.json` to the latest versions and installs them.
 #### Step 1: Create a Virtual Private Cloud (VPC)
 
 1. In the AWS Console, go to **VPC** and select **Create VPC**.
-2. Configure your VPC as shown in the following diagram:
+2. Configure your VPC settings as shown:
 
    ![Create VPC](assets/create_vpc.png)
 
 #### Step 2: Create Subnets
 
 1. Go to **VPC > Subnets > Create subnet**.
-2. Choose your newly created VPC (e.g., `pm_vpc`).
+2. Choose the VPC you created (e.g., `pm_vpc`).
 3. Set up three subnets with the following settings:
 
     - **Subnet 1**
         - Name: `pm_public-subnet-1`
-        - IPv4 subnet CIDR block: `10.0.0.0/24`
+        - IPv4 CIDR block: `10.0.0.0/24`
 
     - **Subnet 2**
         - Name: `pm_private-subnet-1`
-        - IPv4 subnet CIDR block: `10.0.1.0/24`
+        - IPv4 CIDR block: `10.0.1.0/24`
 
     - **Subnet 3**
         - Name: `pm_private-subnet-2`
-        - IPv4 subnet CIDR block: `10.0.2.0/24`
+        - IPv4 CIDR block: `10.0.2.0/24`
 
-> **Tip**: Ensure the Availability Zone matches your chosen AWS region.
+> **Tip**: Ensure the Availability Zone matches your AWS region.
 
-For more details on CIDR blocks, watch
+For more details on CIDR blocks, check out
 this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=27250).
 
 #### Step 3: Create an Internet Gateway
 
 1. Go to **VPC > Internet Gateways** and select **Create Internet Gateway**.
-2. Name your internet gateway and attach it to your VPC (`pm_vpc`).
+2. Name and attach your internet gateway to the VPC (`pm_vpc`).
 
     - ![Create Internet Gateway](assets/pm_internet-gateway.png)
     - ![Attach Gateway to VPC](assets/internet_gateway_attach_vpc.png)
@@ -145,7 +144,7 @@ this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=2725
         - VPC: `pm_vpc`
         - Subnet Association: `pm_private-subnet-2`
 
-2. In `pm_public-route-table-1`, edit routes to allow internet access.
+2. Edit the routes in `pm_public-route-table-1` to allow internet access:
 
     - ![Edit Routes](assets/edit_routes.png)
     - ![Add Route](assets/add_route.png)
@@ -155,23 +154,22 @@ this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=2725
 ### Setting Up EC2 Instance
 
 1. **Launch an EC2 Instance**
-    - In **EC2 > Instances**, select **Launch an instance**.
+    - Go to **EC2 > Instances** and select **Launch an instance**.
 
 2. **Configure Instance Settings**
     - **Name and Tags**: Set Name to `pm_ec2-backend`.
     - **Application and OS Images**:
-        - Select **Amazon Linux**.
-        - Choose **Amazon Linux 2023 AMI (Free tier eligible)**.
+        - Select **Amazon Linux 2023 AMI (Free tier eligible)**.
     - **Key Pair (Login)**:
-        - Create a new RSA key pair, name it `standard-key`.
+        - Create a new RSA key pair and name it `standard-key`.
     - **Network Settings**:
         - Create a new security group and allow:
             - ✅ **SSH traffic** from anywhere
             - ✅ **HTTPS traffic** from the internet
             - ✅ **HTTP traffic** from the internet
         - **Additional Configuration**:
-            - VPC: Select `pm_vpc`
-            - Subnet: Choose `pm_public-subnet-1`
+            - VPC: `pm_vpc`
+            - Subnet: `pm_public-subnet-1`
             - Enable Auto-assign public IP
             - Security Group Name: `pm_ec2-sg`
             - Description: `pm_ec2-sg created [DATE]`
@@ -179,7 +177,102 @@ this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=2725
 3. **Launch the Instance**
 
 4. **Connect to the Instance**
-    - In **EC2 > Instances**, locate `pm_ec2-backend`, select it, and click **Connect**.
-    - Inside the instance details, click **Connect** again.
+    - In **EC2 > Instances**, select `pm_ec2-backend`, and click **Connect**.
 
-> For more details, check out this [video tutorial](https://youtu.be/KAV8vo7hGAo?si=adrniPdbONkLQQQ9&t=20604).
+5. **Connect to EC2 Instance via SSH**
+    - Use EC2 Instance Connect from the AWS Console or SSH to the instance.
+
+6. **Install Node Version Manager (nvm) and Node.js**
+    1. **Install nvm**:
+       ```bash
+       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+       ```
+    2. **Activate nvm**:
+       ```bash
+       . ~/.nvm/nvm.sh
+       ```
+    3. **Install Node.js**:
+       ```bash
+       nvm install node
+       ```
+    4. **Verify installations**:
+       ```bash
+       node -v
+       npm -v
+       ```
+
+7. **Install Git**
+    1. **Update the system and install Git**:
+       ```bash
+       sudo yum update -y
+       sudo yum install git -y
+       ```
+    2. **Verify Git installation**:
+       ```bash
+       git --version
+       ```
+
+8. **Clone the Project Repository**
+    1. **Clone your GitHub repository**:
+       ```bash
+       git clone [your-github-link]
+       ```
+    2. **Navigate to the project and install dependencies**:
+       ```bash
+       cd project-management/server
+       npm install
+       ```
+    3. **Set up the environment**:
+       ```bash
+       echo "PORT=80" > .env
+       ```
+
+9. **Install pm2 for Process Management**
+    1. **Install pm2 globally**:
+       ```bash
+       npm install pm2 -g
+       ```
+    2. **Create a pm2 configuration file**:
+        - In the server directory, create `ecosystem.config.js`:
+          ```javascript
+          module.exports = {
+            apps: [
+              {
+                name: 'project-management',
+                script: 'npm',
+                args: 'run dev',
+                env: {
+                  NODE_ENV: 'production',
+                },
+              },
+            ],
+          };
+          ```
+    3. **Start the app using pm2**:
+       ```bash
+       pm2 start ecosystem.config.js
+       ```
+    4. **Enable pm2 startup on system reboot**:
+       ```bash
+       sudo env PATH=$PATH:$(which node) $(which pm2) startup systemd -u $USER --hp $(eval echo ~$USER)
+       ```
+
+10. **Useful pm2 Commands**
+    - **Stop all processes**:
+      ```bash
+      pm2 stop all
+      ```
+    - **Delete all processes**:
+      ```bash
+      pm2 delete all
+      ```
+    - **Check process status**:
+      ```bash
+      pm2 status
+      ```
+    - **Monitor processes**:
+      ```bash
+      pm2 monit
+      ```
+
+> For more guidance, check out this [video tutorial](https://youtu.be/KAV8vo7hGAo?si=adrniPdbONkLQQQ9&t=20604).
