@@ -9,7 +9,11 @@ const doc = {
   servers: [
     {
       url: "http://localhost:8000",
-      description: ""
+      description: "Developer API Doc",
+    },
+    {
+      url: "http://18.141.160.220:80",
+      description: "Production API Doc",
     }
   ],
   components: {
