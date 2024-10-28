@@ -14,7 +14,12 @@ const doc = {
     {
       url: "http://18.141.160.220:80",
       description: "Production API Doc",
+    },
+    {
+      url: "https://i3p592k4x2.execute-api.ap-southeast-1.amazonaws.com/prod",
+      description: "API Gateway"
     }
+
   ],
   components: {
     securitySchemes: {
