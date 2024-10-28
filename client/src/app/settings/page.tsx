@@ -1,7 +1,11 @@
+"use client"
 import Header from "@/components/Header";
 import React from "react";
+import { useGetAuthUserQuery } from "@/state/api";
 
 const Settings = () => {
+  const { data: currentUser } = useGetAuthUserQuery({});
+  console.log(currentUser);
   const userSettings = {
     username: "johndoe",
     email: "john.doe@example.com",
@@ -19,7 +23,7 @@ const Settings = () => {
       <div className="space-y-4">
         <div>
           <label className={labelStyles}>Username</label>
-          <div className={textStyles}>{userSettings.username}</div>
+          <div className={textStyles}>{currentUser?.user.username}</div>
         </div>
         <div>
           <label className={labelStyles}>Email</label>

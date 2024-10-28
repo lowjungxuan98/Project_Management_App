@@ -540,5 +540,6 @@ this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=2725
     - Lambda function
         - Assign Lambda function -> pm_lambda-trigger
     - Click `Add Lambda trigger`
+9. Then go to CloudWatch > Log groups > /aws/lambda/pm_lambda-trigger see the `result`
 
 > For more guidance, check out this [video tutorial](https://youtu.be/KAV8vo7hGAo?si=adrniPdbONkLQQQ9&t=20604).
