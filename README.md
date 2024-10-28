@@ -392,6 +392,13 @@ this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=2725
     - Go back to the **Overview** tab, click on the **Branch** name, and then click **Redeploy this version**.
       ![img.png](assets/amplify_prod.png)
 
+7. Go to **API Gateway > APIs > [pm_api-gateway] > Authorizer > Create authorizer
+   - Authorizer name -> pm_api-gateway-authorizer
+   - Authorizer type -> Cognito
+   - Lambda function -> pm-ProjectManagement-userpool
+   - Token source -> Authorization
+8. Click `Create authorizer`
+
 ---
 
 ### Setting Up S3 Bucket
@@ -480,5 +487,57 @@ this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=2725
         - Go to Amazon Cognito > User pools > [pm-ProjectManagement-userpool].
         - App Integration -> App client list(scroll to bottom) -> App clients and analytics and copy `Client ID`
       > **Note**: If Production didn't have changes may need to redeploy
+4. go to Lambda > Functions > Create function
+5. Create function
+    - Basic information
+        - Function name -> pm_lambda-trigger
+    - Click `Create function`
+6. Code source
+   ```mjs
+    import https from "node:https";
+
+    export const handler = async (event) => {
+    const postData = JSON.stringify({
+    username: event.request.userAttributes['preferred_username'] || event.userName,
+    cognitoId: event.userName,
+    profilePictureUrl: "i1.jpg",
+    teamId: 1
+    });
+    
+    const options = {
+    hostname: "i3p592k4x2.execute-api.ap-southeast-1.amazonaws.com",
+    port: 443,
+    path: "/users",
+    method: "POST",
+    headers: {
+    "Content-Type": "application/json",
+    "Content-Length": Buffer.byteLength(postData)
+    }
+    };
+    
+    const responseBody = await new Promise((resolve, reject) => {
+    const req = https.request(options, res => {
+    res.setEncoding("utf8");
+    let body = "";
+    res.on("data", chunk => body += chunk);
+    res.on("end", () => resolve(body));
+    });
+    
+        req.on("error", reject);
+        req.write(postData);
+        req.end();
+    });
+    
+    return event;
+    };
+   ```
+7. go to Amazon Cognito > User pools > [pm-ProjectManagement-userpool] > Add Lambda trigger
+8. Add Lambda trigger
+    - Lambda triggers
+        - Trigger type -> Sign-up
+        - Sign-up -> Post confirmation trigger
+    - Lambda function
+        - Assign Lambda function -> pm_lambda-trigger
+    - Click `Add Lambda trigger`
 
 > For more guidance, check out this [video tutorial](https://youtu.be/KAV8vo7hGAo?si=adrniPdbONkLQQQ9&t=20604).
