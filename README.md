@@ -495,19 +495,18 @@ this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=2725
 6. Code source
    ```mjs
     import https from "node:https";
-
+    
     export const handler = async (event) => {
     const postData = JSON.stringify({
-    username: event.request.userAttributes['preferred_username'] || event.userName,
-    cognitoId: event.userName,
+    username: event.userName,
+    cognitoId: event.request.userAttributes.sub,
     profilePictureUrl: "i1.jpg",
     teamId: 1
     });
     
     const options = {
     hostname: "i3p592k4x2.execute-api.ap-southeast-1.amazonaws.com",
-    port: 443,
-    path: "/users",
+    path: "/prod/users",
     method: "POST",
     headers: {
     "Content-Type": "application/json",
@@ -527,6 +526,8 @@ this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=2725
         req.write(postData);
         req.end();
     });
+    
+    console.log("result", responseBody)
     
     return event;
     };
