@@ -300,10 +300,7 @@ this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=2725
     - **Public access**: Select **No**
     - **VPC Security Group**: Create new
         - **New VPC Security Group name**: `pm_rd-sg`
-
-    - **
-
-Availability Zone**: `apse1-az1`
+    - **Availability Zone**: `apse1-az1`
 
 7. **Monitoring**
     - Turn off **Performance Insights**

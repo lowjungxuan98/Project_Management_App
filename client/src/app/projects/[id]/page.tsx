@@ -7,10 +7,15 @@ import Timeline from "@/app/projects/TimelineView";
 import Table from "@/app/projects/TableView";
 import ModalNewTask from "@/components/ModalNewTask";
 
-type Params = Promise<{ id: string }>;
+// type Params = Promise<{ id: string }>; this is for Next.js 15
+type Props = {
+  params: { id: string };
+};
 
-function Project({ params }: { params: Params; }) {
-  const { id } = use(params);
+// function Project({ params }: { params: Params; }) { this is for Next.js 15
+const Project = ({ params }: Props) => {
+  // const { id } = use(params); this is for Next.js 15
+  const { id } = params;
   const [activeTab, setActiveTab] = useState("Board");
   const [isModalNewTaskOpen, setIsModalNewTaskOpen] = useState(false);
 
