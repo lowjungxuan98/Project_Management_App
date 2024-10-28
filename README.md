@@ -445,4 +445,40 @@ this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=2725
     ```
    > **Note**: Not need to redeploy in AWS Amplify you may push to the production branch
 
+---
+
+### Setting Up Cognito
+
+1. go to Amazon Cognito > User pools > Create user pool
+2. Click `Create user pool`
+    1. Configure sign-in experience
+        - Authentication providers
+            - ✅ User name
+            - ✅ Email
+            - ✅ Allow users to sign in with a preferred user name
+            - ✅ Make user name case sensitive
+    2. Configure security requirements
+        - Multi-factor authentication
+            - MFA enforcement -> No MFA
+    3. Configure sign-up experience (keep everything default)
+    4. Configure message delivery
+        - Email provider -> Send email with Cognito
+    5. Integrate your app
+        - User pool name
+            - User pool name -> pm-ProjectManagement-userpool
+        - Initial app client
+            - App client name -> projectmanagementclient
+    6. Review and create
+        - Click `Create user pool`
+3. Add Cognito in Amplify Environment Variables:
+    - Go to **Amplify** in the AWS console.
+    - Click **View App** > **Hosting** > **Environment Variables**.
+    - Add `NEXT_PUBLIC_COGNITO_USER_POOL_CLIENT_ID`
+        - Go to Amazon Cognito > User pools > [pm-ProjectManagement-userpool].
+        - User pool overview, and copy `User pool ID`
+    - Add `NEXT_PUBLIC_COGNITO_USER_POOL_ID` to the API Gateway URL.
+        - Go to Amazon Cognito > User pools > [pm-ProjectManagement-userpool].
+        - App Integration -> App client list(scroll to bottom) -> App clients and analytics and copy `Client ID`
+      > **Note**: If Production didn't have changes may need to redeploy
+
 > For more guidance, check out this [video tutorial](https://youtu.be/KAV8vo7hGAo?si=adrniPdbONkLQQQ9&t=20604).
