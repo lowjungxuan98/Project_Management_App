@@ -155,8 +155,7 @@ this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=2725
 
 ### Setting Up EC2 Instance
 
-1. **Launch an EC2 Instance**
-    - Go to **EC2 > Instances** and select **Launch an instance**.
+1. **Launch an EC2 Instance**, then go to **EC2 > Instances** and select **Launch an instance**.
 
 2. **Configure Instance Settings**
     - **Name and Tags**: Set Name to `pm_ec2-backend`.
@@ -278,41 +277,43 @@ this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=2725
 
 ### Setting Up RDS Database
 
-1. **Choose Database Creation Method**
-    - Select **Standard Create**
+1. go to **RDS > Create database**
 
-2. **Engine Options**
-    - Choose **PostgreSQL**
+    1. **Choose Database Creation Method**
+        - Select **Standard Create**
 
-3. **Templates**
-    - Choose **Free Tier**
+    2. **Engine Options**
+        - Choose **PostgreSQL**
 
-4. **Settings**
-    - **DB instance identifier**: `pm-rds`
-    - **Master username**: `postgres`
-    - **Master password**: `hellomyfriend1234`
+    3. **Templates**
+        - Choose **Free Tier**
 
-5. **Storage**
-    - Disable **Storage autoscaling**
+    4. **Settings**
+        - **DB instance identifier**: `pm-rds`
+        - **Master username**: `postgres`
+        - **Master password**: `hellomyfriend1234`
 
-6. **Connectivity**
-    - **VPC**: Select `pm_vpc`
-    - **Public access**: Select **No**
-    - **VPC Security Group**: Create new
-        - **New VPC Security Group name**: `pm_rd-sg`
-    - **Availability Zone**: `apse1-az1`
+    5. **Storage**
+        - Disable **Storage autoscaling**
 
-7. **Monitoring**
-    - Turn off **Performance Insights**
+    6. **Connectivity**
+        - **VPC**: Select `pm_vpc`
+        - **Public access**: Select **No**
+        - **VPC Security Group**: Create new
+            - **New VPC Security Group name**: `pm_rd-sg`
+        - **Availability Zone**: `apse1-az1`
 
-8. **Additional Configuration**
-    - **Initial database name**: `projectmanagement`
-    - **Backup**: Disable **Enable automated backups**
-    - **Encryption**: Disable **Enable encryption**
+    7. **Monitoring**
+        - Turn off **Performance Insights**
 
-9. **Click "Create Database"**
+    8. **Additional Configuration**
+        - **Initial database name**: `projectmanagement`
+        - **Backup**: Disable **Enable automated backups**
+        - **Encryption**: Disable **Enable encryption**
 
-10. **Set Up Security Group Rules**
+    9. **Click "Create Database"**
+
+2. **Set Up Security Group Rules**
     - Once the database is created, configure security group rules:
         - Go to **EC2 > Security Group > [pm_rd-sg] > Edit Inbound rules**
         - Add necessary rules
@@ -323,7 +324,7 @@ this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=2725
           ![img.png](assets/add_security_group_rules_outbound.png)
         - Click **Save rules**
 
-11. **Connecting the Application to RDS**
+3. **Connecting the Application to RDS**
     1. Edit the `.env` file to include the `DATABASE_URL`:
        ```bash
        nano .env
@@ -390,5 +391,58 @@ this [video explanation](https://youtu.be/KAV8vo7hGAo?si=FUE6BgOziUVqG1eu&t=2725
     - Update `NEXT_PUBLIC_API_BASE_URL` to the API Gateway URL.
     - Go back to the **Overview** tab, click on the **Branch** name, and then click **Redeploy this version**.
       ![img.png](assets/amplify_prod.png)
+
+---
+
+### Setting Up S3 Bucket
+
+1. Amazon S3 > Buckets > Create bucket
+    - General configuration
+        - Bucket name -> pm-s3-images-abu
+    - Block Public Access settings for this bucket
+        - disable Block all public access
+        - ✅ I acknowledge that the current settings might result in this bucket and the objects within becoming public.
+2. Click create bucket
+3. Selected the bucket created just now
+4. Then drag the assets that you want to upload, then click `upload`
+5. go to **Amazon S3** > **Buckets** > **[pm-s3-images-abu]** > **Edit bucket policy**.
+6. Insert code below
+   ```json
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Sid": "PublicReadGetObject",
+          "Effect": "Allow",
+          "Principal": "*",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::pm-s3-images-abu/*"
+        }
+      ]
+    }
+   ```
+7. Click `Save changes`
+8. Edit `client/next.config.mjs`
+   ```js
+    /** @type {import('next').NextConfig} */
+    const nextConfig = {
+      images : {
+        remotePatterns:[
+          {
+            protocol: 'https',
+            hostname: 'pm-s3-images-abu.s3.ap-southeast-1.amazonaws.com',
+            port: '',
+            pathname: "/**",
+          }
+        ]
+      }
+    };
+    export default nextConfig;
+    ```
+9. replace all the `<img src="...">`
+    ```tsx
+   <Image src={`https://pm-s3-images-abu.s3.ap-southeast-1.amazonaws.com/...`}/>
+    ```
+   > **Note**: Not need to redeploy in AWS Amplify you may push to the production branch
 
 > For more guidance, check out this [video tutorial](https://youtu.be/KAV8vo7hGAo?si=adrniPdbONkLQQQ9&t=20604).

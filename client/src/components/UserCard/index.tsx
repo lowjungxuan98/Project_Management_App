@@ -11,7 +11,7 @@ const UserCard = ({ user }: Props) => {
     <div className="flex items-center rounded border p-4 shadow">
       {user.profilePictureUrl && (
         <Image
-          src={`/${user.profilePictureUrl}`}
+          src={`https://pm-s3-images-abu.s3.ap-southeast-1.amazonaws.com/${user.profilePictureUrl}`}
           alt="profile picture"
           width={32}
           height={32}
