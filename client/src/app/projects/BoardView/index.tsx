@@ -1,9 +1,10 @@
 import { useGetTasksQuery, useUpdateTaskStatusMutation } from "@/state/api";
+import React from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { Task as TaskType } from "@/state/api";
 import { EllipsisVertical, MessageSquareMore, Plus } from "lucide-react";
 import { format } from "date-fns";
-import { Task as TaskType } from "@/state/api";
 import Image from "next/image";
 
 type BoardProps = {
@@ -19,7 +20,6 @@ const BoardView = ({ id, setIsModalNewTaskOpen }: BoardProps) => {
     isLoading,
     error
   } = useGetTasksQuery({ projectId: Number(id) });
-
   const [updateTaskStatus] = useUpdateTaskStatusMutation();
 
   const moveTask = (taskId: number, toStatus: string) => {
@@ -53,7 +53,12 @@ type TaskColumnProps = {
   setIsModalNewTaskOpen: (isOpen: boolean) => void;
 };
 
-const TaskColumn = ({ status, tasks, moveTask, setIsModalNewTaskOpen }: TaskColumnProps) => {
+const TaskColumn = ({
+                      status,
+                      tasks,
+                      moveTask,
+                      setIsModalNewTaskOpen
+                    }: TaskColumnProps) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "task",
     drop: (item: { id: number }) => moveTask(item.id, status),
@@ -250,4 +255,5 @@ const Task = ({ task }: TaskProps) => {
     </div>
   );
 };
+
 export default BoardView;

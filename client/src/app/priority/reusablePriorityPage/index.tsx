@@ -132,10 +132,6 @@ const ReusablePriorityPage = ({ priority }: Props) => {
       </div>
       {isLoading ? (
         <div>Loading tasks...</div>
-      ) : filteredTasks?.length == 0 ? (
-        <div className="grid grid-cols-1 gap-4">
-          No Tasks
-        </div>
       ) : view === "list" ? (
         <div className="grid grid-cols-1 gap-4">
           {filteredTasks?.map((task: Task) => (
